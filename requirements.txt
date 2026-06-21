@@ -7,3 +7,5 @@ instagram-private-api>=1.6.0
 hikerapi>=1.7.1
 gnureadline>=8.0.0; platform_system != "Windows"
 pyreadline>=2.1; platform_system == "Windows"
+colorama>=0.4.6
+python-whois>=0.9.4

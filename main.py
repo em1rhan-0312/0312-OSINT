@@ -22,9 +22,15 @@ from modules.ddos_module import DDoSAttack, run_ddos
 from modules.ddos_menu import ddos_interactive_menu
 from modules.sms_module import SMSBomber, run_sms_bomb
 from modules.sms_menu import sms_interactive_menu
+from modules.extra_osint import (
+    PortScanner, SubdomainFinder, TechDetect,
+    HashLookup, SiteCopier, AdminPanelFinder
+)
 
 IG = None
 CONNECTED = False
+
+COMMANDS = {}
 
 ASCII_ART = r"""
   /$$$$$$   /$$$$$$    /$$    /$$$$$$          /$$$$$$   /$$$$$$  /$$$$$$ /$$   /$$ /$$$$$$$$
@@ -35,31 +41,20 @@ ASCII_ART = r"""
 | $$ \ $$$ /$$  \ $$  | $$  | $$             | $$  | $$ /$$  \ $$  | $$  | $$\  $$$   | $$   
 |  $$$$$$/|  $$$$$$/ /$$$$$$| $$$$$$$$       |  $$$$$$/|  $$$$$$/ /$$$$$$| $$ \  $$   | $$   
  \______/  \______/ |______/|________/        \______/  \______/ |______/|__/  \__/   |__/  
-                                    Made By Emirhan.0312 
-"""
-
-COMMANDS = {}
-
-
-def signal_handler(sig, frame):
-    disp.pout("\n\nGoodbye!\n", disp.RED, bold=True)
-    sys.exit(0)
-
-
-BANNER = """
-+========================================================================+
-|             0312-OSINT - Multi-Platform OSINT Framework                |
-| Instagram | Phone | Email | Username | IP | Domain | SMS Bomber | DDOS |
-+========================================================================+
 """
 
 def print_logo():
     for line in ASCII_ART.split("\n"):
         if line.strip():
             disp.pout(line + "\n", disp.GREEN)
-    for line in BANNER.split("\n"):
-        if line.strip():
-            disp.pout(line + "\n", disp.CYAN)
+    disp.pout("=" * 40 + "\n", disp.CYAN)
+    disp.pout("        Made By emirhan.0312\n", disp.BLUE, bold=True)
+    disp.pout("=" * 40 + "\n", disp.CYAN)
+
+
+def signal_handler(sig, frame):
+    disp.pout("\n\nGoodbye!\n", disp.RED, bold=True)
+    sys.exit(0)
 
 
 def print_help():
@@ -73,17 +68,22 @@ def print_help():
 
 
 def print_menu():
-    disp.pheader("MAIN MENU")
-    disp.pout("  [1] Instagram OSINT\n", disp.GREEN)
-    disp.pout("  [2] Phone Number Lookup\n", disp.GREEN)
-    disp.pout("  [3] Email Lookup\n", disp.GREEN)
-    disp.pout("  [4] Username Search (25+ platforms)\n", disp.GREEN)
-    disp.pout("  [5] IP / Domain Lookup\n", disp.GREEN)
-    disp.pout("  [6] DDoS Attack Menu\n", disp.RED)
-    disp.pout("  [7] SMS Bomber Menu\n", disp.RED)
-    disp.pout("  [8] Help / All Commands\n", disp.YELLOW)
-    disp.pout("  [9] Clear Screen\n", disp.WHITE)
-    disp.pout("  [0] Exit\n\n", disp.RED)
+    disp.pout("  [1]  Instagram OSINT\n", disp.GREEN)
+    disp.pout("  [2]  Phone Number Lookup\n", disp.GREEN)
+    disp.pout("  [3]  Email Lookup\n", disp.GREEN)
+    disp.pout("  [4]  Username Search (25+ platforms)\n", disp.GREEN)
+    disp.pout("  [5]  IP / Domain Lookup\n", disp.GREEN)
+    disp.pout("  [6]  DDoS Attack Menu\n", disp.RED)
+    disp.pout("  [7]  SMS Bomber Menu\n", disp.RED)
+    disp.pout("  [8]  Port Scanner\n", disp.CYAN)
+    disp.pout("  [9]  Subdomain Discovery\n", disp.CYAN)
+    disp.pout("  [10] Site Tech Detection\n", disp.CYAN)
+    disp.pout("  [11] Hash Lookup / Crack\n", disp.CYAN)
+    disp.pout("  [12] Admin Panel Finder\n", disp.CYAN)
+    disp.pout("  [13] Site File Copier\n", disp.CYAN)
+    disp.pout("  [14] Help / All Commands\n", disp.YELLOW)
+    disp.pout("  [15] Clear Screen\n", disp.WHITE)
+    disp.pout("  [0]  Exit\n\n", disp.RED)
 
 
 def cmd_help():
@@ -357,6 +357,11 @@ def cmd_ddos(target=None, method=None, threads=None, duration=None):
         m = disp.pin("Method (GET/POST/TCP/UDP/etc): ", disp.YELLOW) or "GET"
     else:
         m = method
+    port_input = disp.pin("Port [80]: ", disp.YELLOW)
+    try:
+        port = int(port_input) if port_input.strip() else None
+    except:
+        port = None
     if not threads:
         try:
             threads = int(disp.pin("Thread count [50]: ", disp.YELLOW) or "50")
@@ -368,8 +373,8 @@ def cmd_ddos(target=None, method=None, threads=None, duration=None):
         except:
             duration = 30
 
-    disp.pinfo(f"\nStarting DDoS attack: {m} -> {target} ({threads} threads)\n")
-    success, msg, stats = run_ddos(target, m, threads, duration)
+    disp.pinfo(f"\nStarting DDoS attack: {m} -> {target}:{port or 80} ({threads} threads)\n")
+    success, msg, stats = run_ddos(target, m, threads, duration, port)
     if success:
         disp.pok(f"Attack finished. Total packets sent: {stats['sent']}")
     else:
@@ -406,6 +411,118 @@ def cmd_sms_services():
     disp.pheader("AVAILABLE SMS SERVICES")
     for s in services:
         disp.pout(f"  {s}\n", disp.GREEN)
+
+
+def cmd_portscan(target=None):
+    if not target:
+        target = disp.pin("IP or Domain: ", disp.YELLOW)
+    if not target:
+        return
+    # Resolve domain
+    try:
+        ip = socket.gethostbyname(target)
+    except:
+        ip = target
+    disp.pout(f"\n[*] Scanning {target} ({ip})...\n", disp.YELLOW)
+    scanner = PortScanner(ip)
+    results = scanner.scan()
+    if results:
+        disp.pheader(" OPEN PORTS ")
+        for port, service in results:
+            disp.pout(f"  {port}/tcp".ljust(20), disp.GREEN)
+            disp.pout(f"{service}\n")
+    else:
+        disp.pout("  No open ports found on common ports.\n", disp.RED)
+
+
+def cmd_subdomain(domain=None):
+    if not domain:
+        domain = disp.pin("Domain: ", disp.YELLOW)
+    if not domain:
+        return
+    disp.pout(f"\n[*] Searching subdomains for {domain}...\n", disp.YELLOW)
+    finder = SubdomainFinder(domain)
+    results = finder.find()
+    if results:
+        disp.pheader(f" SUBDOMAINS FOUND: {len(results)} ")
+        for sub, ip in results[:30]:
+            disp.pout(f"  {sub}.{domain}".ljust(35), disp.GREEN)
+            disp.pout(f"{ip}\n")
+    else:
+        disp.pout("  No subdomains found.\n", disp.RED)
+
+
+def cmd_tech(url=None):
+    if not url:
+        url = disp.pin("URL: ", disp.YELLOW)
+    if not url:
+        return
+    disp.pout(f"\n[*] Analyzing {url}...\n", disp.YELLOW)
+    td = TechDetect(url)
+    info = td.detect()
+    disp.pheader(" TECHNOLOGY INFO ")
+    disp.pout(f"  URL: {info.get('url')}\n", disp.WHITE)
+    disp.pout(f"  Status: {info.get('status')}\n", disp.GREEN)
+    disp.pout(f"  Server: {info.get('server')}\n", disp.CYAN)
+    disp.pout(f"  Size: {info.get('size')} bytes\n", disp.WHITE)
+    if info.get("tech"):
+        disp.pout("\n  Detected:\n", disp.YELLOW)
+        for t in info["tech"]:
+            disp.pout(f"    - {t}\n", disp.GREEN)
+
+
+def cmd_hash(hash_val=None):
+    if not hash_val:
+        hash_val = disp.pin("Hash: ", disp.YELLOW)
+    if not hash_val:
+        return
+    hl = HashLookup(hash_val)
+    ht = hl.identify_type()
+    disp.pheader(f" HASH: {ht} ({len(hash_val)} chars) ")
+    if ht != "Unknown":
+        gen = hl.generate("test", ht.lower())
+        disp.pout(f"  'test' -> {gen}\n", disp.WHITE)
+    result = hl.crack()
+    if result:
+        disp.pok(f"  Cracked: {result}")
+    else:
+        disp.pout("  Not found in online databases.\n", disp.RED)
+        disp.pout("  Tip: Try crackstation.net or hashes.com\n", disp.YELLOW)
+
+
+def cmd_sitecopy(url=None):
+    if not url:
+        url = disp.pin("URL (https://site.com): ", disp.YELLOW)
+    if not url:
+        return
+    disp.pout(f"\n[*] Copying {url} ...\n", disp.YELLOW)
+    sc = SiteCopier(url)
+    result = sc.crawl()
+    if result.get("files_downloaded", 0) > 0:
+        disp.pok(f"Done! {result['files_downloaded']} files saved to {result['output']}")
+    else:
+        disp.perror("No files downloaded")
+
+
+def cmd_admin(url=None):
+    if not url:
+        url = disp.pin("URL (https://site.com): ", disp.YELLOW)
+    if not url:
+        return
+    disp.pout(f"\n[*] Scanning admin panels on {url} ...\n", disp.YELLOW)
+    pf = AdminPanelFinder(url)
+    results = pf.scan()
+    if results:
+        disp.pok(f"Found {len(results)} potential admin paths:")
+        for r in results:
+            msg = f"  {r['path']} ({r['status']})"
+            if "redirect" in r:
+                msg += f" -> {r['redirect']}"
+            if "note" in r:
+                msg += f" [{r['note']}]"
+            disp.pout(f"{msg}\n", disp.GREEN if r['status'] == 200 else disp.YELLOW)
+    else:
+        disp.pout("  No admin panels found.\n", disp.RED)
 
 
 COMMANDS = {
@@ -446,6 +563,12 @@ COMMANDS = {
     "ddos-list":  ("List available DDoS methods", cmd_ddos_list),
     "sms":        ("SMS bomber interactive menu", lambda: cmd_sms_bomb(None, None)),
     "sms-list":   ("List available SMS services", cmd_sms_services),
+    "portscan":   ("Scan open ports on IP/domain", lambda: cmd_portscan(None)),
+    "subdomain":  ("Discover subdomains of a domain", lambda: cmd_subdomain(None)),
+    "tech":       ("Detect website technologies", lambda: cmd_tech(None)),
+    "hash":       ("Identify and crack hashes", lambda: cmd_hash(None)),
+    "admin":      ("Find admin/panel login pages", lambda: cmd_admin(None)),
+    "sitecopy":   ("Download website files (clone)", lambda: cmd_sitecopy(None)),
     "menu":       ("Show numbered main menu", print_menu),
 }
 
@@ -512,8 +635,20 @@ def interactive_mode():
                 elif num == 7:
                     cmd_sms_bomb(None, None)
                 elif num == 8:
-                    print_help()
+                    cmd_portscan(None)
                 elif num == 9:
+                    cmd_subdomain(None)
+                elif num == 10:
+                    cmd_tech(None)
+                elif num == 11:
+                    cmd_hash(None)
+                elif num == 12:
+                    cmd_admin(None)
+                elif num == 13:
+                    cmd_sitecopy(None)
+                elif num == 14:
+                    print_help()
+                elif num == 15:
                     cmd_clear()
                     print_logo()
                     print_menu()
@@ -600,6 +735,20 @@ def single_command_mode(cmd_str, args):
             cmd_sms_services()
         elif cmd == "menu":
             print_menu()
+        elif cmd in ("portscan", "subdomain", "tech", "hash", "admin", "sitecopy"):
+            arg_val = args[0] if args else None
+            if cmd == "portscan":
+                cmd_portscan(arg_val)
+            elif cmd == "subdomain":
+                cmd_subdomain(arg_val)
+            elif cmd == "tech":
+                cmd_tech(arg_val)
+            elif cmd == "hash":
+                cmd_hash(arg_val)
+            elif cmd == "admin":
+                cmd_admin(arg_val)
+            elif cmd == "sitecopy":
+                cmd_sitecopy(arg_val)
         elif cmd in ("help", "h"):
             print_help()
     else:
@@ -625,7 +774,13 @@ Examples:
   0312-OSINT ddos-list                List DDoS methods
   0312-OSINT sms 905551234567         SMS bomber with args
   0312-OSINT sms                      SMS bomber interactive menu
-  0312-OSINT menu                     Show numbered main menu
+  0312-OSINT portscan 8.8.8.8         Port scanner
+  0312-OSINT subdomain example.com    Subdomain discovery
+  0312-OSINT tech example.com         Technology detection
+   0312-OSINT hash <md5/sha1/sha256>   Hash lookup / crack
+   0312-OSINT admin example.com        Find admin panels
+   0312-OSINT sitecopy example.com     Download website files
+   0312-OSINT menu                     Show numbered main menu
         """
     )
     parser.add_argument("command", nargs="?", help="Command to execute")

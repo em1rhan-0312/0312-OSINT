@@ -1,4 +1,4 @@
-# 0312-OSINT v2.0
+# 0312-OSINT 
 
 Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | Domain | DDoS | SMS
 

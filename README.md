@@ -5,7 +5,7 @@ Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | D
 ---
 ## Image
 
-<img width="1115" height="628" alt="image" src="https://github.com/user-attachments/assets/62ef7890-35ee-462d-b97f-c3d1c46a7a17" />
+<img width="1115" height="628" alt="Ekran görüntüsü 2026-06-25 200900" src="https://github.com/user-attachments/assets/692b01a9-6fc3-4af8-8d52-fc786b1d824c" />
 
 ## English
 

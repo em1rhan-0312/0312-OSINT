@@ -26,6 +26,11 @@ from modules.extra_osint import (
     PortScanner, SubdomainFinder, TechDetect,
     HashLookup, SiteCopier, AdminPanelFinder
 )
+from modules.dir_bruter import run_dir_bruter
+from modules.metadata_extractor import run_metadata_extractor
+from modules.shodan_osint import run_shodan_lookup
+from modules.social_crawler import run_social_crawler
+from modules.leak_search import run_leak_search
 
 IG = None
 CONNECTED = False
@@ -81,8 +86,13 @@ def print_menu():
     disp.pout("  [11] Hash Lookup / Crack\n", disp.CYAN)
     disp.pout("  [12] Admin Panel Finder\n", disp.CYAN)
     disp.pout("  [13] Site File Copier\n", disp.CYAN)
-    disp.pout("  [14] Help / All Commands\n", disp.YELLOW)
-    disp.pout("  [15] Clear Screen\n", disp.WHITE)
+    disp.pout("  [14] Directory Bruter\n", disp.CYAN)
+    disp.pout("  [15] Image Metadata Extractor\n", disp.CYAN)
+    disp.pout("  [16] Shodan IP Lookup\n", disp.CYAN)
+    disp.pout("  [17] Social Media Crawler\n", disp.CYAN)
+    disp.pout("  [18] Leak Database Search\n", disp.CYAN)
+    disp.pout("  [19] Help / All Commands\n", disp.YELLOW)
+    disp.pout("  [20] Clear Screen\n", disp.WHITE)
     disp.pout("  [0]  Exit\n\n", disp.RED)
 
 
@@ -524,6 +534,20 @@ def cmd_admin(url=None):
     else:
         disp.pout("  No admin panels found.\n", disp.RED)
 
+def cmd_dir_bruter():
+    run_dir_bruter()
+
+def cmd_metadata_extractor():
+    run_metadata_extractor()
+
+def cmd_shodan():
+    run_shodan_lookup()
+
+def cmd_social_crawl():
+    run_social_crawler()
+
+def cmd_leak_search():
+    run_leak_search()
 
 COMMANDS = {
     "help": ("Show this help", cmd_help),
@@ -558,7 +582,6 @@ COMMANDS = {
     "igphone":    ("Instagram: phone scraping from followers", lambda: cmd_instagram_phones(None)),
     "propic":     ("Instagram: download profile picture", lambda: cmd_instagram_propic(None)),
     "report":     ("Instagram: generate HTML+JSON report", lambda: cmd_instagram_report(None)),
-
     "ddos":       ("DDoS interactive menu (Layer7/Layer4)", lambda: cmd_ddos(None, None, None, None)),
     "ddos-list":  ("List available DDoS methods", cmd_ddos_list),
     "sms":        ("SMS bomber interactive menu", lambda: cmd_sms_bomb(None, None)),
@@ -569,6 +592,9 @@ COMMANDS = {
     "hash":       ("Identify and crack hashes", lambda: cmd_hash(None)),
     "admin":      ("Find admin/panel login pages", lambda: cmd_admin(None)),
     "sitecopy":   ("Download website files (clone)", lambda: cmd_sitecopy(None)),
+    "shodan":     ("Shodan IP detailed lookup", cmd_shodan),
+    "crawl":      ("Social media keyword crawl", cmd_social_crawl),
+    "leak":       ("Check for data breaches", cmd_leak_search),
     "menu":       ("Show numbered main menu", print_menu),
 }
 
@@ -647,8 +673,18 @@ def interactive_mode():
                 elif num == 13:
                     cmd_sitecopy(None)
                 elif num == 14:
-                    print_help()
+                    cmd_dir_bruter()
                 elif num == 15:
+                    cmd_metadata_extractor()
+                elif num == 16:
+                    cmd_shodan()
+                elif num == 17:
+                    cmd_social_crawl()
+                elif num == 18:
+                    cmd_leak_search()
+                elif num == 19:
+                    print_help()
+                elif num == 20:
                     cmd_clear()
                     print_logo()
                     print_menu()

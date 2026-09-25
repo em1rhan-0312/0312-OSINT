@@ -1,6 +1,6 @@
 # 0312-OSINT 
 
-Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | Domain | DDoS | SMS
+Multi-Platform OSINT & Cybersecurity Framework — Instagram | Phone | Email | Username | IP | Domain | DDoS | SMS | Web Scanning
 
 ---
 ## Image
@@ -15,6 +15,7 @@ Multi-Platform OSINT Framework — Instagram | Phone | Email | Username | IP | D
 git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
+pip install Pillow
 ```
 
 ### Configuration
@@ -31,6 +32,12 @@ hunterio_key =                 # https://hunter.io — email
 numverify_key =                # https://numverify.com — phone
 ipinfo_key =                   # https://ipinfo.io — IP (free)
 shodan_key =                   # https://shodan.io — domain/IP
+
+[shodan_api]
+api =                          # Shodan API Key
+
+[hibp_api]
+api =                          # HaveIBeenPwned API Key
 ```
 
 ### Interactive Mode
@@ -39,7 +46,7 @@ shodan_key =                   # https://shodan.io — domain/IP
 python main.py
 ```
 
-Starts interactive mode with a numbered menu. Type a number (1-15) or a command name.
+Starts interactive mode with a numbered menu. Type a number (1-20) or a command name.
 
 ```
   [1] Instagram OSINT
@@ -55,9 +62,15 @@ Starts interactive mode with a numbered menu. Type a number (1-15) or a command 
   [11] Hash Lookup / Crack
   [12] Admin Panel Finder
   [13] Site File Copier
-  [14] Help / All Commands
-  [15] Clear Screen
+  [14] Directory Bruter
+  [15] Image Metadata Extractor
+  [16] Shodan IP Lookup
+  [17] Social Media Crawler
+  [18] Leak Database Search
+  [19] Help / All Commands
+  [20] Clear Screen
   [0] Exit
+```
 
 ### CLI Usage
 
@@ -161,6 +174,7 @@ Interactive menu for Turkish phone numbers. Supports 41+ services (Trendyol, Hep
 git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 pip install -r requirements.txt
+pip install Pillow
 ```
 
 ### Yapılandırma
@@ -177,6 +191,12 @@ hunterio_key =                 # https://hunter.io — email
 numverify_key =                # https://numverify.com — telefon
 ipinfo_key = cbbc0cdfa88a63   # https://ipinfo.io — IP (ücretsiz)
 shodan_key =                   # https://shodan.io — domain/IP
+
+[shodan_api]
+api =                          # Shodan API Key
+
+[hibp_api]
+api =                          # HaveIBeenPwned API Key
 ```
 
 ### Interaktif Mod
@@ -201,8 +221,13 @@ Numaralı menü ile interaktif mod başlar. Menüden sayı seçebilir veya komut
   [11] Hash Çözümleme
   [12] Admin Panel Bulucu
   [13] Site Dosya Kopyalama
-  [14] Yardım / Tüm Komutlar
-  [15] Ekranı Temizle
+  [14] Directory Bruter
+  [15] Image Metadata Extractor
+  [16] Shodan IP Lookup
+  [17] Social Media Crawler
+  [18] Leak Database Search
+  [19] Yardım / Tüm Komutlar
+  [20] Ekranı Temizle
   [0] Çıkış
 ```
 

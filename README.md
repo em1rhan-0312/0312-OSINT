@@ -5,7 +5,7 @@ Multi-Platform OSINT & Cybersecurity Framework — Instagram | Phone | Email | U
 ---
 ## Image
 
-<img width="1115" height="628" alt="Ekran görüntüsü 2026-06-25 200900" src="https://github.com/user-attachments/assets/692b01a9-6fc3-4af8-8d52-fc786b1d824c" />
+<img width="1115" height="704" alt="image" src="https://github.com/user-attachments/assets/a5ca7057-6946-4e5c-abd3-01250d6fec51" />
 
 ## English
 

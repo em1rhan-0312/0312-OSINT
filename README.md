@@ -13,14 +13,14 @@ Multi-Platform OSINT & Cybersecurity Framework — Instagram | Phone | Email | U
 
 #### 🪟 Windows
 ```bash
-git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 python windows_setup.py
 ```
 
 #### 📱 Termux (Android)
 ```bash
-git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 python installation.py
 ```
@@ -185,14 +185,14 @@ Interactive menu for Turkish phone numbers. Supports 41+ services (Trendyol, Hep
 
 #### 🪟 Windows
 ```bash
-git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 python windows_setup.py
 ```
 
 #### 📱 Termux (Android)
 ```bash
-git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+git clone https://github.com/em1rhan-0312/0312-OSINT.git
 cd 0312-OSINT
 python installation.py
 ```

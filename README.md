@@ -5,15 +5,28 @@ Multi-Platform OSINT & Cybersecurity Framework — Instagram | Phone | Email | U
 ---
 ## Image
 
-<img width="1115" height="704" alt="image" src="https://github.com/user-attachments/assets/a5ca7057-6946-4e5c-abd3-01250d6fec51" />
+<img width="1115" height="628" alt="Ekran görüntüsü 2026-06-25 200900" src="https://github.com/user-attachments/assets/692b01a9-6fc3-4af8-8d52-fc786b1d824c" />
 
 ## English
 
 ### Installation
 
+#### 🪟 Windows
 ```bash
-git clone https://github.com/em1rhan-0312/0312-OSINT.git
+git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
 cd 0312-OSINT
+python windows_setup.py
+```
+
+#### 📱 Termux (Android)
+```bash
+git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+cd 0312-OSINT
+python installation.py
+```
+
+#### 🛠️ Manual Installation
+```bash
 pip install -r requirements.txt
 pip install Pillow
 ```
@@ -170,9 +183,22 @@ Interactive menu for Turkish phone numbers. Supports 41+ services (Trendyol, Hep
 
 ### Kurulum
 
+#### 🪟 Windows
 ```bash
-git clone https://github.com/em1rhan-0312/0312-OSINT.git
+git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
 cd 0312-OSINT
+python windows_setup.py
+```
+
+#### 📱 Termux (Android)
+```bash
+git clone https://gitlab.com/emirhan.0312/0312-OSINT.git
+cd 0312-OSINT
+python installation.py
+```
+
+#### 🛠️ Manuel Kurulum
+```bash
 pip install -r requirements.txt
 pip install Pillow
 ```
